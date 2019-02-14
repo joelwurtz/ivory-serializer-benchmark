@@ -35,61 +35,16 @@ class JaneAutomapperBenchmark extends AbstractBench
 
     public function initSerializer(): void
     {
-        if (!file_exists($cache = __DIR__. '/../../cache/automapper')) {
+        if (!file_exists($cache = __DIR__. '/../../cache/jane-automapper')) {
             mkdir($cache);
         }
-        $reflectionExtractor = new ReflectionExtractor();
-        $phpDocExtractor = new PhpDocExtractor();
-        $transformerFactory = new ChainTransformerFactory();
 
-        $sourceTargetMappingExtractor = new SourceTargetPropertiesMappingExtractor(new PropertyInfoExtractor(
-            [$reflectionExtractor],
-            [$reflectionExtractor, $phpDocExtractor],
-            [$reflectionExtractor],
-            [$reflectionExtractor]
-        ),
-            new ReflectionAccessorExtractor(),
-            $transformerFactory,
-            new ClassMetadataFactory(new AnnotationLoader(new AnnotationReader()))
+        $loader = new FileLoader(
+            new Compiler(),
+            __DIR__. '/../../cache/jane-automapper'
         );
 
-        $fromTargetMappingExtractor = new FromTargetPropertiesMappingExtractor(new PropertyInfoExtractor(
-            [$reflectionExtractor],
-            [$reflectionExtractor, $phpDocExtractor],
-            [$reflectionExtractor],
-            [$reflectionExtractor]
-        ),
-            new ReflectionAccessorExtractor(),
-            $transformerFactory,
-            new ClassMetadataFactory(new AnnotationLoader(new AnnotationReader()))
-        );
-
-        $fromSourceMappingExtractor = new FromSourcePropertiesMappingExtractor(new PropertyInfoExtractor(
-            [$reflectionExtractor],
-            [$reflectionExtractor, $phpDocExtractor],
-            [$reflectionExtractor],
-            [$reflectionExtractor]
-        ),
-            new ReflectionAccessorExtractor(),
-            $transformerFactory,
-            new ClassMetadataFactory(new AnnotationLoader(new AnnotationReader()))
-        );
-
-        $automapper = new AutoMapper(new FileLoader(new Compiler(), $cache), new MapperConfigurationFactory(
-            $sourceTargetMappingExtractor,
-            $fromSourceMappingExtractor,
-            $fromTargetMappingExtractor
-        ));
-
-        $transformerFactory->addTransformerFactory(new MultipleTransformerFactory($transformerFactory));
-        $transformerFactory->addTransformerFactory(new NullableTransformerFactory($transformerFactory));
-        $transformerFactory->addTransformerFactory(new BuiltinTransformerFactory());
-        $transformerFactory->addTransformerFactory(new ArrayTransformerFactory($transformerFactory));
-        $transformerFactory->addTransformerFactory(new ObjectTransformerFactory($automapper));
-
-        $configurationForum = new MapperConfiguration($fromSourceMappingExtractor, Forum::class, 'array');
-        $automapper->register($configurationForum);
-        $this->mapper = $automapper->getMapper(Forum::class, 'array');
+        $this->mapper = AutoMapper::create(false, $loader)->getMapper(Forum::class, 'array');
     }
 
     protected function serialize(Forum $data): void

@@ -5,11 +5,7 @@
     "egeloen/serializer": "^1.0",
     "jane-php/automapper": "5.x-dev",
     "jms/serializer": "^2.0",
-    "symfony/polyfill-apcu": "^1.0",
-    "symfony/cache": "^4.0",
-    "symfony/console": "^4.0",
-    "symfony/property-access": "^4.0",
-    "symfony/serializer": "^4.0",
+    "symfony/symfony": "dev-symfony/automapper as 3.5.0",
     "thunderer/serializard": "^0.3",
     "phpbench/phpbench": "^0.14.0",
     "tsantos/serializer": "dev-jms-metadata-v2",
@@ -26,6 +22,12 @@
       "name": "Asmir Mustafic",
       "email": "goetas@gmail.com",
       "role": "maintainer"
+    }
+  ],
+  "repositories": [
+    {
+      "type": "vcs",
+      "url": "https://github.com/joelwurtz/symfony"
     }
   ],
   "autoload": {
